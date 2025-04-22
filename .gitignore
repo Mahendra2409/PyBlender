@@ -1,8 +1,8 @@
 Output/
 Output_after_removing_Shader_nodes/
-kinect/
+kinect/__MACOSX/
 Buffer/
 BlenderToolbox/
 Colored_PC_2.O/Output_PC_Vis/
-Colored_PC_2.O/Point_cloud/
+# Colored_PC_2.O/Point_cloud/
 Colored_PC_2.O/kinect/
