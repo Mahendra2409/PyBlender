@@ -33,7 +33,9 @@ for filename in os.listdir(directory_path):
         print(f"Output file already exists: {render_output}. Skipping...")
         continue
 
-    if filename.endswith(".xyz") and filename != ground_truth_filename:
+    # if filename.endswith(".xyz") and filename != ground_truth_filename:
+
+    if filename.endswith(".xyz"):
         noisy_path = os.path.join(directory_path, filename)
         noisy_points = np.loadtxt(noisy_path)
 
