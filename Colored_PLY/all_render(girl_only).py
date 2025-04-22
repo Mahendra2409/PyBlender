@@ -1,13 +1,13 @@
 import os
 # import render_big_girl
 # import render_cone
-import render_girl_SS
+import render_girl
 # import render_anything 
 
 # Path to kinect folder "that contain all .ply files"
-input_folder = r"M:\Order to PC\CAD_Reconstruction\Blender\kinect\kinect"
+input_folder = r"Blender\kinect\kinect"
 # Path to output folder
-output_folder = r"M:\Order to PC\CAD_Reconstruction\Blender\Render_girl_screenshot"
+output_folder = r"Blender\Output"
 
 os.makedirs(output_folder, exist_ok=True)
 
@@ -27,15 +27,7 @@ for filename in os.listdir(input_folder):
         print(f"Rendering [{filename}] with render_big_girl.py...")
         render_big_girl.render(meshPath, outputPath)
 
-    # elif filename.endswith("cone_recon.ply"):
-    #     print(f"Rendering [{filename}] with render_cone.py...")
-    #     render_cone.render(meshPath, outputPath)
-
     elif filename.endswith("girl_recon.ply"):
         print(f"Rendering [{filename}] with render_girl.py...")
-        render_girl_SS.render(meshPath, outputPath)
+        render_girl.render(meshPath, outputPath)
         
-    # else:
-    #     print(f"Rendering [{filename}] with render_enything.py...")
-    #     render_anything.render(meshPath, outputPath)
-

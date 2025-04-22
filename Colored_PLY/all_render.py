@@ -6,9 +6,9 @@ import render_girl_SS
 # import render_anything 
 
 # Path to kinect folder "that contain all .ply files"
-input_folder = r"M:\\Order to PC\\CAD_Reconstruction\\Blender\\kinect\\kinect"
+input_folder = r"Blender\\kinect\\kinect"
 # Path to output folder
-output_folder = r"M:\Order to PC\CAD_Reconstruction\Blender\Output_after_removing_Shader_nodes"
+output_folder = r"Blender\Output_after_removing_Shader_nodes"
 
 # Loop through files
 for filename in os.listdir(input_folder):

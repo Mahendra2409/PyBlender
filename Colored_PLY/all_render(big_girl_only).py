@@ -25,16 +25,3 @@ for filename in os.listdir(input_folder):
     if filename.endswith("big_girl_recon.ply"):
         print(f"Rendering [{filename}] with render_big_girl.py...")
         render_big_girl.render(meshPath, outputPath)
-
-    # if filename.endswith("cone_recon.ply"):
-    #     print(f"Rendering [{filename}] with render_cone.py...")
-    #     render_cone.render(meshPath, outputPath)
-
-    # elif filename.endswith("girl_recon.ply"):
-    #     print(f"Rendering [{filename}] with render_girl.py...")
-    #     render_girl.render(meshPath, outputPath)
-        
-    # else:
-    #     print(f"Rendering [{filename}] with render_enything.py...")
-    #     render_anything.render(meshPath, outputPath)
-
