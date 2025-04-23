@@ -7,10 +7,12 @@ from scipy.spatial import cKDTree
 import blendertoolbox as bt
 
 # Define paths
-directory_path = r'M:\Order to PC\CAD_Reconstruction\Blender\Colored_PC_2.O\Point_cloud\Cube_PC'
-ground_truth_filename = r'cube_pyramid_hole_clean.xyz'
+directory_path = r'M:\Order to PC\CAD_Reconstruction\Blender\Colored_PC_2.O\Point_cloud\Genus_PC'
+ground_truth_filename = r'genus3.xyz'
 ground_truth_path = os.path.join(directory_path, ground_truth_filename)
-output_dir = r'M:\Order to PC\CAD_Reconstruction\Blender\Colored_PC_2.O\Output_PC_Vis\cube_output'
+output_dir = r'M:\Order to PC\CAD_Reconstruction\Blender\Colored_PC_2.O\Output_PC_Vis\Genus_output'
+
+os.makedirs(output_dir, exist_ok=True)
 
 
 
@@ -50,14 +52,18 @@ for filename in os.listdir(directory_path):
         colors = colormap(normalized_distances)[:, :3]
 
         # Create mesh and set colors
-        location = (-0.143001, -5.01999, -6.8061)
-        rotation = (451.261, -1.17449, -229.719)
-        scale = (0.05, 0.05, 0.05)
+        # location = (-0.209576, -7.3482, -4.2197)
+        # rotation = (451.261, -1.17449, -240.191)
+        # scale = (4.32249, 4.32249, 4.32249)
+
+        location = (-0.985762, -7.3482, -3.44044)
+        rotation = (364.643, -0.347309, -342.913)
+        scale = (4.84246, 4.84246, 4.84246)
         mesh = bt.readNumpyPoints(noisy_points, location, rotation, scale)
         mesh = bt.setPointColors(mesh, colors)
 
         ptColor = bt.colorObj([], 0.5, 1.0, 1.0, 0.0, 0.0)
-        ptSize = 0.79
+        ptSize = 0.012 
         bt.setMat_pointCloudColored(mesh, ptColor, ptSize)
 
         # Camera setup
