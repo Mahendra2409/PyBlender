@@ -7,7 +7,7 @@ import numpy as np
 import blendertoolbox as bt
 
 # Define file path for the ground truth point cloud
-ground_truth_path = r'M:\Order to PC\CAD_Reconstruction\Blender\Colored_PC_2.O\Point_cloud\Cube_PC\cube_pyramid_hole_clean.xyz'
+ground_truth_path = r'M:\Order to PC\CAD_Reconstruction\Blender\Colored_PC_2.O\Point_cloud(.xyz)\Cube_PC\cube_pyramid_hole_clean.xyz'
 outputPath = os.path.abspath('./cube_clean.png')
 
 # Initialize Blender

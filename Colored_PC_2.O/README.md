@@ -2,9 +2,9 @@
 
 ### Folder:
 
-`Script` contain all the the python scripts.
+`current folder` contain all the the python scripts.
 
-`Point_cloud` it contain subfolder for each type of model.
+[Data\ data.xyz(Colored_PC_2.O)\ Point_cloud(.xyz)](Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)) it contain subfolder for each type of model(.xyz formate).
 
 `Output_PC_Vis` Output of Script.
 

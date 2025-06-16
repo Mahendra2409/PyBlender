@@ -4,10 +4,11 @@ import os
 import render_girl_SS
 # import render_anything 
 
-# Path to kinect folder "that contain all .ply files"
-input_folder = r"Blender\kinect\kinect"
-# Path to output folder
-output_folder = r"Blender\Render_girl_screenshot"
+project_root_cwd = os.getcwd()
+print(f"Current working directory: {project_root_cwd}")
+
+input_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "kinect", "kinect")
+output_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "Output", "girl_SS")
 
 os.makedirs(output_folder, exist_ok=True)
 
