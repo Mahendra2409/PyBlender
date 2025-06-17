@@ -3,7 +3,7 @@
 Python script for rendering point clouds.
 
 First you need to download this:
-[Download Data from here](https://drive.google.com/file/d/1-Je6lepAuIfM9C5AhRyYJuf86TkigIIX/view?usp=drive_link) 
+[Download Data from here](https://drive.google.com/file/d/1-Je6lepAuIfM9C5AhRyYJuf86TkigIIX/view?usp=drive_link) or by implementing 6th step. 
 
 `Colored_PC_2.O` contain script for .xyz files.
 
