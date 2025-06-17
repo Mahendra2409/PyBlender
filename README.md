@@ -25,13 +25,11 @@ cd PyBlender
 python -m venv .venv
 ```
 Activate virtual environment 
-
-for windows:
 ```
+(for windows)
 .venv\Scripts\activate
-```
-for linux:
-```
+
+(for linux)
 source .venv/bin/activate
 ```
 
