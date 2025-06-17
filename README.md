@@ -1,6 +1,6 @@
 # PyBlender
 
-Python script for rendering point clouds.
+Python script for rendering point clouds using Blender.
 
 First you need to download this:
 [Download Data from here](https://drive.google.com/file/d/1-Je6lepAuIfM9C5AhRyYJuf86TkigIIX/view?usp=drive_link) or by implementing 6th step. 
