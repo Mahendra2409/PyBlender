@@ -3,7 +3,7 @@
 Python script for rendering point clouds.
 
 First you need to download this:
-[Download Data from here](https://drive.google.com/drive/folders/1tYPzzux8hMA2IQ5DFokFlmg83e7f1630?usp=sharing)
+[Download Data from here](https://drive.google.com/file/d/1-Je6lepAuIfM9C5AhRyYJuf86TkigIIX/view?usp=drive_link) 
 
 `Colored_PC_2.O` contain script for .xyz files.
 
@@ -33,4 +33,11 @@ pip install -r requirements.txt
 ```
 git clone https://github.com/HTDerekLiu/BlenderToolbox.git
 ```
+6. Download Data using python script (Skip !! if you already downloaded from above link).
+```
+python Data.py
+```
+
 6. Now it is ready to run any Script in this Repositry.
+
+
