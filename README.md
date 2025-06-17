@@ -20,11 +20,21 @@ First you need to download this:
 ```
 cd PyBlender
 ```
-3. Create virtual environment and activate it.
+3. Create virtual environment 
 ```
 python -m venv .venv
+```
+Activate virtual environment 
+
+for windows:
+```
 .venv\Scripts\activate
 ```
+for linux:
+```
+source .venv/bin/activate
+```
+
 4. install requirements.txt
 ```
 pip install -r requirements.txt
