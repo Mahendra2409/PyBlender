@@ -23,6 +23,10 @@ cd PyBlender
 3. Create virtual environment 
 ```
 python -m venv .venv
+
+OR
+
+conda create --prefix ./.venv python=3.10.11 cmake=3.14.0 -y
 ```
 Activate virtual environment 
 ```
