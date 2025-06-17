@@ -38,6 +38,6 @@ git clone https://github.com/HTDerekLiu/BlenderToolbox.git
 python Data.py
 ```
 
-6. Now it is ready to run any Script in this Repositry.
+7. Now it is ready to run any Script in this Repositry.
 
 
