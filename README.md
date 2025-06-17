@@ -9,4 +9,4 @@ First you need to download this:
 
 `Colored_PLY` contain script for .ply file.
 
-`Data` it contain input for these sripts. and output will also be saved in this folder.
+`Data` it contain input for above scripts and output will also be saved in this folder.
