@@ -1,6 +1,6 @@
 import os
 
-import bpy
+# import bpy
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.spatial import cKDTree

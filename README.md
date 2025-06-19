@@ -20,11 +20,23 @@ First you need to download this:
 ```
 cd PyBlender
 ```
-3. Create virtual environment and activate it.
+3. Create virtual environment 
 ```
 python -m venv .venv
-.venv\Scripts\activate
+
+OR
+
+conda create --prefix ./.venv python=3.10.11 cmake=3.14.0 -y
 ```
+Activate virtual environment 
+```
+(for windows)
+.venv\Scripts\activate
+
+(for linux)
+source .venv/bin/activate
+```
+
 4. install requirements.txt
 ```
 pip install -r requirements.txt
