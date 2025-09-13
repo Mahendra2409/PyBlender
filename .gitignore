@@ -8,6 +8,7 @@ Colored_PC_2.O/Output_PC_Vis/
 Colored_PC_2.O/Point_cloud(.xyz)/
 Colored_PC_2.O/kinect/
 Data/
+Tools
 # .Colored_PC/
 .venv/
 # Byte-compiled / optimized / DLL files
