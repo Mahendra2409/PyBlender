@@ -11,9 +11,16 @@ project_root_cwd = os.getcwd()
 print(f"Current working directory: {project_root_cwd}")
 # Define paths
 
+################# CHANGE THESE PATHS TO YOUR OWN PATHS #################
+
+# Path to folder which contain all your Point clouds (including GT and noisy ones)
 directory_path = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Point_cloud(.xyz)", "ccylinder_scaled_PC_new")
+
+# Ground truth point cloud file name (make sure it is in the same folder as the noisy point clouds)
 ground_truth_filename = r'gt_ccylinder.xyz'
 ground_truth_path = os.path.join(directory_path, ground_truth_filename)
+
+# Output directory for rendered images
 output_dir = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Output_PC_Vis", "ccylinder_output_new")
 
 os.makedirs(output_dir, exist_ok=True)
