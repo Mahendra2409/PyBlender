@@ -11,6 +11,7 @@ project_root_cwd = os.getcwd()
 print(f"Current working directory: {project_root_cwd}")
 # Define paths
 
+COLORMAP= "viridis"
 ################# CHANGE THESE PATHS TO YOUR OWN PATHS #################
 
 # Path to folder which contain all your Point clouds (including GT and noisy ones)
@@ -21,7 +22,7 @@ ground_truth_filename = r'gt_ccylinder.xyz'
 ground_truth_path = os.path.join(directory_path, ground_truth_filename)
 
 # Output directory for rendered images
-output_dir = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Output_PC_Vis", "ccylinder_output_new")
+output_dir = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Output_PC_Vis", "ccylinder_output_new", f"{COLORMAP}_colormap")
 
 os.makedirs(output_dir, exist_ok=True)
 
@@ -58,7 +59,7 @@ for filename in os.listdir(directory_path):
         normalized_distances = np.log1p(normalized_distances) / np.log1p(1)
 
         # Get colors from colormap
-        colormap = plt.get_cmap("viridis")
+        colormap = plt.get_cmap(COLORMAP)
         colors = colormap(normalized_distances)[:, :3]
 
         # Create mesh and set colors
@@ -110,12 +111,12 @@ for filename in os.listdir(directory_path):
         tree_nodes.links.new(denoise_node.outputs['Image'], viewer.inputs['Image'])
 
         # Save colormap
-        colormap_path = os.path.join(output_dir, "viridis_colormap.png")
+        colormap_path = os.path.join(output_dir, f"{COLORMAP}_colormap.png")
         gradient = np.linspace(0, 1, 256).reshape(1, -1)
         gradient = np.vstack([gradient] * 50)
 
         plt.figure(figsize=(6, 1))
-        plt.imshow(gradient, aspect="auto", cmap="viridis")
+        plt.imshow(gradient, aspect="auto", cmap=COLORMAP)
         plt.axis("off")
         plt.savefig(colormap_path, bbox_inches="tight", pad_inches=0, dpi=300)
         plt.close()
@@ -124,7 +125,7 @@ for filename in os.listdir(directory_path):
         # Save Blender file and render
         blend_file_name = f"{os.path.splitext(filename)[0]}.blend"
         blend_file_path = os.path.join(output_dir, blend_file_name)
-        bpy.ops.wm.save_mainfile(filepath=blend_file_path)
+        # bpy.ops.wm.save_mainfile(filepath=blend_file_path)
 
         
         bt.renderImage(render_output, cam)

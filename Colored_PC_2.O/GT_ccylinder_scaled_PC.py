@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt  # Import Matplotlib for colormap
 import numpy as np
 
 import blendertoolbox as bt
+COLORMAP = "viridis"  # Define the colormap to use
 
 # Define file path for the ground truth point cloud
 ground_truth_path = r'M:\Order-to-PC\PyBlender\Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\ccylinder_scaled_PC_new\gt_ccylinder.xyz'
-outputPath = r'M:\Order-to-PC\PyBlender\Data\data.xyz(Colored_PC_2.O)\Output_PC_Vis\ccylinder_output_new\gt_ccylinder.png'
+outputPath = rf'M:\Order-to-PC\PyBlender\Data\data.xyz(Colored_PC_2.O)\Output_PC_Vis\ccylinder_output_new\{COLORMAP}_colormap\gt_ccylinder.png'
 
 # Initialize Blender
 imgRes_x = 1000
@@ -21,7 +22,7 @@ bt.blenderInit(imgRes_x, imgRes_y, numSamples, exposure)
 ground_truth_points = np.loadtxt(ground_truth_path)
 
 # Use the lowest value of the 'viridis' colormap for all points
-colormap = plt.get_cmap("viridis")
+colormap = plt.get_cmap(COLORMAP)
 min_color = colormap(0.0)[:3]  # RGB only
 colors = np.tile(min_color, (ground_truth_points.shape[0], 1))  # Repeat for each point
 
