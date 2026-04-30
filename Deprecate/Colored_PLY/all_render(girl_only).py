@@ -1,7 +1,7 @@
 import os
 # import render_big_girl
 # import render_cone
-import render_girl
+import Deprecate.Colored_PLY.render_girl as render_girl
 # import render_anything 
 
 # Get the current working directory.

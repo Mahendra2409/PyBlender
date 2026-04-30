@@ -1,6 +1,6 @@
 import os
-# import render_big_girl
-import render_cone
+import Deprecate.Colored_PLY.render_big_girl as render_big_girl
+# import render_cone
 # import render_girl
 # import render_anything 
 
@@ -11,7 +11,7 @@ project_root_cwd = os.getcwd()
 print(f"Current working directory: {project_root_cwd}")
 
 input_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "kinect", "kinect")
-output_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "Output", "cone")
+output_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "Output", "big_girl")
 
 os.makedirs(output_folder, exist_ok=True)
 
@@ -25,6 +25,7 @@ for filename in os.listdir(input_folder):
         print(f"Output file already exists: {outputPath}. Skipping...")
         continue
     
-    if filename.endswith("cone_recon.ply"):
-        print(f"Rendering [{filename}] with render_cone.py...")
-        render_cone.render(meshPath, outputPath)
+    # Check category and call the respective render function
+    if filename.endswith("big_girl_recon.ply"):
+        print(f"Rendering [{filename}] with render_big_girl.py...")
+        render_big_girl.render(meshPath, outputPath)

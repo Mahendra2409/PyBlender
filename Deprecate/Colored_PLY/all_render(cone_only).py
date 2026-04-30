@@ -1,6 +1,6 @@
 import os
 # import render_big_girl
-import render_madersperger
+import Deprecate.Colored_PLY.render_cone as render_cone
 # import render_girl
 # import render_anything 
 
@@ -10,8 +10,8 @@ import render_madersperger
 project_root_cwd = os.getcwd()
 print(f"Current working directory: {project_root_cwd}")
 
-input_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "kinect", "kinect", "Madersperger_PLY")
-output_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "Output", "madersperger")
+input_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "kinect", "kinect")
+output_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "Output", "cone")
 
 os.makedirs(output_folder, exist_ok=True)
 
@@ -25,6 +25,6 @@ for filename in os.listdir(input_folder):
         print(f"Output file already exists: {outputPath}. Skipping...")
         continue
     
-    if filename.endswith("madersperger.ply"):
-        print(f"Rendering [{filename}] with render_madersperger.py...")
-        render_madersperger.render(meshPath, outputPath)
+    if filename.endswith("cone_recon.ply"):
+        print(f"Rendering [{filename}] with render_cone.py...")
+        render_cone.render(meshPath, outputPath)

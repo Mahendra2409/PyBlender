@@ -16,13 +16,27 @@ Welcome! This guide will show you how to use our automated script to turn raw 3D
 
 ## 🛠️ Step 1: Prepare Your Google Drive
 
+
+### [Need to do only one time!!!!] Create a shortcut of the Shared Folder(PyBlender_Render_Farm) into Drive 
+Since the required folder is shared with you, you need to add it to your own Google Drive. **You only have to do this one time.** Once added, you can run any script for the point clouds in this folder without repeating these steps.
+
+1. Go to the **Shared with me** section in Google Drive.
+2. Select the shared folder **"PyBlender_Render_Farm"**.
+3. Click on the **Organize** button (or icon) in the top menu.
+4. Select **Add shortcut** (or Add) to add it to "My Drive".
+
+<img src="../public/shared%20with%20me.png" alt="Shared with me" width="300">
+<img src="../public/Organize.png" alt="Organize" width="400">
+<img src="../public/Add.png" alt="Add" width="400">
+
+### Folder Structure
 The script looks for a very specific folder structure in your **[Google Drive](https://drive.google.com/drive/folders/1sj-RqD5HRypGx-ZLqXpvyzY1CN84qJu-?usp=sharing)**. Make sure your raw `.xyz` point cloud files (and your Ground Truth file) are placed exactly like this:
 
 
 
 ```
 📁 My Drive
- └── 📁 PyBlender Images
+ └── 📁 PyBlender_Render_Farm
       └── 📁 PointCloud
            └── 📁 xyzFormat
                 └── 📁 ccylinder_scaled_PC_new      <-- Put your files here!
@@ -35,14 +49,11 @@ The script looks for a very specific folder structure in your **[Google Drive](h
 
 ## 💻 Step 2: Set Up Google Colab
 
-1. Open a new notebook in [Google Colab](https://colab.research.google.com/).
+1. Go to Notebook in this directory and Click <a  target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> button.
 2. **Turn on the GPU:** Go to the top menu, click **Runtime > Change runtime type**, and select **T4 GPU**.
-3. **Connect to Drive:** Run this code in the first cell to link Colab to your Google Drive:
+3. **Run all the cell**
+4. **Allow Permission** Allow Drive Access permission.
 
-```python
-from google.colab import drive
-drive.mount('/content/drive')
-```
 
 ---
 
