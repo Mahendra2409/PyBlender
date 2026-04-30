@@ -1,3 +1,5 @@
+If you don't want to mount google drive or just want to do experiment with rendering use **[.test_within_colab.ipynb](https://colab.research.google.com/github/Mahendra2409/PyBlender/blob/main/Colab_Script/.test_within_colab.ipynb)** Notebook.
+
 # 🚀 Quick Start Guide: Rendering Point Clouds in Google Colab
 
 Welcome! This guide will show you how to use our automated script to turn raw 3D point cloud data (`.xyz` files) into 2D rendered images (`.png`) using **Blender 4.0** in Google Colab.
@@ -57,7 +59,8 @@ The script looks for a very specific folder structure in your **[Google Drive](h
 
 ---
 
-## 🎨 How to Customize the Output (The CONFIG)
+<details>
+<summary><h2>Rendering Configuration Details</h2></summary>
 
 At the very top of the `render.py` script, you will find the **Configuration Section**. You can easily change how the final image looks by changing these values.
 
@@ -86,4 +89,6 @@ At the very top of the `render.py` script, you will find the **Configuration Sec
 | SHADOW_SOFTNESS | Lighting | Controls how blurred or sharp the edges of the cast shadows are (higher value = softer shadows). |
 | AMBIENT_COLOR | Lighting | The color and intensity (RGBA) of the global background environmental lighting. |
 | SHADOW_THRESHOLD | Lighting | The alpha cutoff point for rendering the shadow catcher floor plane. |
+
+</details>
 
