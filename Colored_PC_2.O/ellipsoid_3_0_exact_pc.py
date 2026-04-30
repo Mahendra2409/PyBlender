@@ -1,0 +1,173 @@
+import os
+
+import bpy
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.spatial import cKDTree
+import blendertoolbox as bt
+
+
+project_root_cwd = os.getcwd()
+print(f"Current working directory: {project_root_cwd}")
+# Define paths
+
+directory_path = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Point_cloud(.xyz)", "ellipsoid_3.0_PC", "scaled_v2")
+ground_truth_filename = r'ellipsoid.xyz'
+ground_truth_path = os.path.join(directory_path, ground_truth_filename)
+output_dir = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Output_PC_Vis", "Ellipsoid_3_0_output", "scaled_v5")
+
+os.makedirs(output_dir, exist_ok=True)
+
+
+# Iterate through all files in the directory
+for filename in os.listdir(directory_path):
+
+    # Initialize Blender
+    imgRes_x = 1000
+    imgRes_y = 1000
+    numSamples = 100
+    exposure = 1.5
+    bt.blenderInit(imgRes_x, imgRes_y, numSamples, exposure)
+
+    # Load ground truth point cloud
+    ground_truth_points = np.loadtxt(ground_truth_path)
+    tree = cKDTree(ground_truth_points)
+
+    render_output = os.path.join(output_dir, f"{os.path.splitext(filename)[0]}.png")
+    if os.path.exists(render_output):
+        print(f"Output file already exists: {render_output}. Skipping...")
+        continue
+
+    if filename.endswith(".xyz") and filename != ground_truth_filename:
+
+    # if filename.endswith(".xyz"):
+    #######################
+        # noisy_path = os.path.join(directory_path, filename)
+        # noisy_points = np.loadtxt(noisy_path)
+        ###################
+        
+        noisy_path = os.path.join(directory_path, filename)
+        
+        # Load all data, but slice to keep only the first 3 columns (X, Y, Z)
+        full_noisy_data = np.loadtxt(noisy_path)
+        noisy_points = full_noisy_data[:, :3] 
+
+        # Calculate distances (now strictly using 3D coordinates)
+        distances, _ = tree.query(noisy_points)
+
+        # Calculate distances
+        distances, _ = tree.query(noisy_points)
+        max_distance = np.percentile(distances, 99)
+        normalized_distances = np.clip(distances / max_distance, 0, 1)
+        normalized_distances = np.log1p(normalized_distances) / np.log1p(1)
+
+        # Get colors from colormap
+        colormap = plt.get_cmap("viridis")
+        colors = colormap(normalized_distances)[:, :3]
+
+        # Create mesh and set colors
+        
+        # location = (0.191093, -8.96565, -3.83248)
+        # scale = (0.022679, 0.022679, 0.022679)
+        # location = (0.0, 0.0, 0.0)        
+        # rotation = (481.196, 18.9057, -233.664)
+        scale = (2.0, 2.0, 2.0)
+        
+        # --- DYNAMIC SCALING AND CENTERING ---
+        # 1. Find the bounding box of the point cloud
+        min_bounds = np.min(noisy_points, axis=0)
+        max_bounds = np.max(noisy_points, axis=0)
+        
+        # 2. Find the largest dimension (width, depth, or height)
+        max_size = np.max(max_bounds - min_bounds)
+
+        # ptSize = 0.79
+        ptSize = 0.004
+        
+        # 3. Define a target size that fits your camera frame (2.0 meters works well based on your images)
+        target_size = 2.0 
+        
+        # 4. Calculate the dynamic scale factor
+        scale_factor = target_size / max_size
+        # scale = (scale_factor, scale_factor, scale_factor)
+
+        # 5. Automatically center the point cloud at the world origin (0,0,0)
+        center = (max_bounds + min_bounds) / 2.0
+        # We shift the location by the negative center, multiplied by our new scale factor
+        # location = tuple(-center * scale_factor) 
+        location = (0.007266, 0.137527, 0.187947)
+        
+        # Keep your existing rotation
+        # rotation = (544.23, 17.843, -319.204)
+        rotation = (562.435, 17.477, -329.939)
+        
+        # Create mesh and set colors
+        mesh = bt.readNumpyPoints(noisy_points, location, rotation, scale)
+        
+        
+        
+        
+        
+        # mesh = bt.readNumpyPoints(noisy_points, location, rotation, scale)
+        mesh = bt.setPointColors(mesh, colors)
+
+        ptColor = bt.colorObj([], 0.5, 1.0, 1.0, 0.0, 0.0)
+
+        bt.setMat_pointCloudColored(mesh, ptColor, ptSize)
+
+        # Camera setup
+        camLocation = (0.141656, 2.50472, 1.37419)
+        lookAtLocation = (0, 0, 0)
+        focalLength = 45
+        cam = bt.setCamera(camLocation, lookAtLocation, focalLength)
+
+        # Light setup
+        lightAngle = (6, -30, -155)
+        strength = 2
+        shadowSoftness = 0.3
+        sun = bt.setLight_sun(lightAngle, strength, shadowSoftness)
+
+        # Ambient light
+        bt.setLight_ambient(color=(0.1, 0.1, 0.1, 1))
+        bt.shadowThreshold(alphaThreshold=0.05, interpolationMode='CARDINAL')
+
+        # Setup compositor
+        bpy.context.scene.use_nodes = True
+        tree_nodes = bpy.context.scene.node_tree
+        tree_nodes.nodes.clear()
+
+        render_layers = tree_nodes.nodes.new('CompositorNodeRLayers')
+        denoise_node = tree_nodes.nodes.new(type='CompositorNodeDenoise')
+        composite = tree_nodes.nodes.new('CompositorNodeComposite')
+        viewer = tree_nodes.nodes.new('CompositorNodeViewer')
+
+        render_layers.location = (-300, 0)
+        denoise_node.location = (0, 0)
+        composite.location = (300, 0)
+        viewer.location = (300, -200)
+
+        tree_nodes.links.new(render_layers.outputs['Image'], denoise_node.inputs['Image'])
+        tree_nodes.links.new(render_layers.outputs['Denoising Normal'], denoise_node.inputs['Normal'])
+        tree_nodes.links.new(render_layers.outputs['Denoising Albedo'], denoise_node.inputs['Albedo'])
+        tree_nodes.links.new(denoise_node.outputs['Image'], composite.inputs['Image'])
+        tree_nodes.links.new(denoise_node.outputs['Image'], viewer.inputs['Image'])
+
+        # Save colormap
+        colormap_path = os.path.join(output_dir, "viridis_colormap.png")
+        gradient = np.linspace(0, 1, 256).reshape(1, -1)
+        gradient = np.vstack([gradient] * 50)
+
+        plt.figure(figsize=(6, 1))
+        plt.imshow(gradient, aspect="auto", cmap="viridis")
+        plt.axis("off")
+        plt.savefig(colormap_path, bbox_inches="tight", pad_inches=0, dpi=300)
+        plt.close()
+        print(f"Colormap saved at {colormap_path}")
+
+        # Save Blender file and render
+        blend_file_name = f"{os.path.splitext(filename)[0]}.blend"
+        blend_file_path = os.path.join(output_dir, blend_file_name)
+        bpy.ops.wm.save_mainfile(filepath=blend_file_path)
+
+        
+        bt.renderImage(render_output, cam)

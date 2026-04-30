@@ -7,8 +7,8 @@ import numpy as np
 import blendertoolbox as bt
 
 # Define file path for the ground truth point cloud
-ground_truth_path = r'M:\Order to PC\CAD_Reconstruction\Blender\Colored_PC_2.O\Point_cloud(.xyz)\Cube_PC\cube_pyramid_hole_clean.xyz'
-outputPath = os.path.abspath('./cube_clean.png')
+ground_truth_path = r'M:\Order-to-PC\PyBlender\Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\ellipsoid_3.0_PC\scaled_v2\ellipsoid.xyz'
+outputPath = os.path.abspath(r'M:\Order-to-PC\PyBlender\Data\data.xyz(Colored_PC_2.O)\Output_PC_Vis\Ellipsoid_3_0_output\scaled_v3\ellipsoid_GT.png')
 
 # Initialize Blender
 imgRes_x = 1000
@@ -27,9 +27,39 @@ colors = np.tile(min_color, (ground_truth_points.shape[0], 1))  # Repeat for eac
 
 
 # Create mesh and set colors
-location = (-0.143001, -5.01999, -6.8061)
-rotation = (451.261, -1.17449, -229.719)
-scale = (0.05, 0.05, 0.05)
+# location = (-0.143001, -5.01999, -6.8061)
+# rotation = (544.23, 17.843, -319.204)
+# scale = (0.05, 0.05, 0.05)
+# mesh = bt.readNumpyPoints(ground_truth_points, location, rotation, scale)
+
+# --- DYNAMIC SCALING AND CENTERING ---
+# 1. Find the bounding box of the point cloud (safeguarded to first 3 columns)
+xyz_points = ground_truth_points[:, :3]
+min_bounds = np.min(xyz_points, axis=0)
+max_bounds = np.max(xyz_points, axis=0)
+
+# 2. Find the largest dimension (width, depth, or height)
+max_size = np.max(max_bounds - min_bounds)
+
+# 3. Define a target size that fits your camera frame
+target_size = 2.0 
+
+# 4. Calculate the dynamic scale factor
+scale_factor = target_size / max_size
+# scale = (scale_factor, scale_factor, scale_factor)
+scale = (2.0, 2.0, 2.0)
+
+# 5. Automatically center the point cloud at the world origin (0,0,0)
+center = (max_bounds + min_bounds) / 2.0
+# location = tuple(-center * scale_factor) 
+location = (0.007266, 0.137527, 0.187947)
+
+# Keep your specific rotation for this file
+# rotation = (544.23, 17.843, -319.204)
+rotation = (562.435, 17.477, -329.939)
+# rotation = (481.196, 18.9057, -233.664)
+
+# Create mesh
 mesh = bt.readNumpyPoints(ground_truth_points, location, rotation, scale)
 
 # Apply uniform color
@@ -37,7 +67,7 @@ mesh = bt.setPointColors(mesh, colors)
 
 # Set material for the point cloud
 ptColor = bt.colorObj([], 0.5, 1.0, 1.0, 0.0, 0.0)
-ptSize = 0.79
+ptSize = 0.007
 bt.setMat_pointCloudColored(mesh, ptColor, ptSize)
 
 # Set invisible plane (shadow catcher)
