@@ -14,7 +14,7 @@ print(f"Current working directory: {project_root_cwd}")
 directory_path = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Point_cloud(.xyz)", "Child_PC")
 ground_truth_filename = r'child.xyz'
 ground_truth_path = os.path.join(directory_path, ground_truth_filename)
-output_dir = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Output_PC_Vis", "Child_output3")
+output_dir = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Output_PC_Vis", "Child_output4")
 
 
 # Iterate through all files in the directory
@@ -49,7 +49,7 @@ for filename in os.listdir(directory_path):
         normalized_distances = np.log1p(normalized_distances) / np.log1p(1)
 
         # Get colors from colormap
-        colormap = plt.get_cmap("viridis")
+        colormap = plt.get_cmap("viriis")
         colors = colormap(normalized_distances)[:, :3]
 
         # Create mesh and set colors

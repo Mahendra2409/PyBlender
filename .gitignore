@@ -1,5 +1,6 @@
 __pycache__
 .vscode
+artifacts
 Output/
 Output_after_removing_Shader_nodes/
 kinect/__MACOSX/
