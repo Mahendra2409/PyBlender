@@ -1,4 +1,6 @@
 __pycache__
+Colormap_Catloge_Website/Compare/dist
+Colormap_Catloge_Website/Compare/node_modules
 .vscode
 artifacts
 Output/
@@ -12,7 +14,8 @@ Colored_PC_2.O/Point_cloud(.xyz)/
 Colored_PC_2.O/kinect/
 Data/
 Tools
-# .Colored_PC/
+Colormap_Catloge_Website/Compare/Public
+# .Colored_P/
 .venv/
 # Byte-compiled / optimized / DLL files
 __pycache__/
