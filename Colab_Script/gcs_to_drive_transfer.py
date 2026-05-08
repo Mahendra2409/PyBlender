@@ -40,10 +40,12 @@ else:
         print("Please add it to the 'Secrets' tab (key icon) on the left sidebar.")
 
 
-# %% ==================== CELL 4: Transfer All Files ====================
+# %% ==================== CELL 4: Transfer All Files (FAST) ====================
 import os
 import time
 import shutil
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from google.cloud import storage
 from collections import defaultdict
 
@@ -52,12 +54,13 @@ GCS_KEY_PATH = '/tmp/pyblender-e37593034bc1.json'
 BUCKET_NAME = 'pyblender-render-farm'
 GCS_BASE_PATH = 'RenderImages'  # Root prefix in the bucket
 DRIVE_BASE_PATH = '/content/drive/MyDrive/PyBlender/Compare'
+LOCAL_TEMP_DIR = '/content/temp_gcs_download'  # Fast local SSD staging area
 
 # Set True to re-download files that already exist on Drive
 FORCE_OVERWRITE = False
 
-# Batch size for progress reporting
-PROGRESS_INTERVAL = 25
+# Concurrent download threads (GCS is network-bound, more threads = faster)
+MAX_WORKERS = 32
 # ─────────────────────────────────────────────────────────────
 
 def sizeof_fmt(num_bytes):
@@ -69,15 +72,82 @@ def sizeof_fmt(num_bytes):
     return f"{num_bytes:.1f} TB"
 
 
+# Thread-safe progress counter
+class ProgressTracker:
+    def __init__(self, total):
+        self.total = total
+        self.transferred = 0
+        self.skipped = 0
+        self.failed = 0
+        self.bytes_transferred = 0
+        self.lock = threading.Lock()
+        self.failed_files = []
+        self.start_time = time.time()
+
+    def record_transfer(self, size):
+        with self.lock:
+            self.transferred += 1
+            self.bytes_transferred += size
+            self._maybe_print()
+
+    def record_skip(self):
+        with self.lock:
+            self.skipped += 1
+            self._maybe_print()
+
+    def record_fail(self, path, error):
+        with self.lock:
+            self.failed += 1
+            self.failed_files.append((path, error))
+            print(f"   ✗ FAILED: {path} — {error}")
+
+    def _maybe_print(self):
+        done = self.transferred + self.skipped + self.failed
+        if done % 50 == 0 or done == self.total:
+            elapsed = time.time() - self.start_time
+            rate = self.transferred / elapsed if elapsed > 0 else 0
+            remaining = self.total - done
+            eta = remaining / rate if rate > 0 else 0
+            print(
+                f"   [{done}/{self.total}] "
+                f"✓ {self.transferred} downloaded, ⏭ {self.skipped} skipped, ✗ {self.failed} failed "
+                f"| {sizeof_fmt(self.bytes_transferred)} | {rate:.1f} files/s | ETA: {eta:.0f}s"
+            )
+
+
+def download_blob(blob, local_path, drive_path, tracker):
+    """Download a single blob to local SSD (called by thread pool)."""
+    relative_path = blob.name[len(GCS_BASE_PATH) + 1:]
+
+    # Skip if already on Drive (unless overwrite)
+    if not FORCE_OVERWRITE and os.path.exists(drive_path):
+        tracker.record_skip()
+        return
+
+    try:
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+        blob.download_to_filename(local_path)
+        tracker.record_transfer(blob.size or 0)
+    except Exception as e:
+        tracker.record_fail(relative_path, str(e))
+
+
 def transfer_gcs_to_drive():
-    """Main transfer function: GCS bucket → Google Drive."""
+    """
+    FAST transfer: GCS → Local SSD (concurrent) → Drive (batch copy).
     
+    Why two steps?
+      - GCS → Local SSD: Network-bound, parallelizable with 32 threads
+      - Local SSD → Drive: FUSE mount has per-file overhead, but
+        shutil.copytree is still much faster than downloading over
+        network directly to the FUSE mount
+    """
+
     # ── 1. Connect to GCS ────────────────────────────────────
     print("🔗 Connecting to GCS...")
     client = storage.Client.from_service_account_json(GCS_KEY_PATH)
     bucket = client.bucket(BUCKET_NAME)
-    
-    # Verify bucket access
+
     try:
         next(bucket.list_blobs(max_results=1, prefix=GCS_BASE_PATH + '/'))
         print(f"✓ Connected to bucket: {BUCKET_NAME}")
@@ -87,107 +157,123 @@ def transfer_gcs_to_drive():
     except Exception as e:
         print(f"✗ Failed to access bucket: {e}")
         return
-    
+
     # ── 2. List ALL blobs ────────────────────────────────────
     print(f"\n📋 Listing all files under gs://{BUCKET_NAME}/{GCS_BASE_PATH}/...")
     all_blobs = []
     total_size = 0
-    
+
     for blob in bucket.list_blobs(prefix=GCS_BASE_PATH + '/'):
-        # Skip "directory" markers
         if blob.name.endswith('/'):
             continue
         all_blobs.append(blob)
         total_size += blob.size or 0
-    
+
     print(f"   Found {len(all_blobs)} files ({sizeof_fmt(total_size)})")
-    
+
     if not all_blobs:
         print("Nothing to transfer!")
         return
-    
+
     # ── 3. Analyze structure ─────────────────────────────────
     pc_types = defaultdict(lambda: defaultdict(int))
     for blob in all_blobs:
         parts = blob.name[len(GCS_BASE_PATH) + 1:].split('/')
         if len(parts) >= 2:
             pc_types[parts[0]][parts[1]] += 1
-    
+
     print(f"\n📂 Point Cloud Types found:")
     for pc_type, colormaps in sorted(pc_types.items()):
         total_files = sum(colormaps.values())
         print(f"   ├── {pc_type}: {len(colormaps)} colormaps, {total_files} files")
-    
-    # ── 4. Ensure Drive base directory exists ────────────────
+
+    # ── 4. Prepare local staging directory ───────────────────
+    if os.path.exists(LOCAL_TEMP_DIR):
+        shutil.rmtree(LOCAL_TEMP_DIR)
+    os.makedirs(LOCAL_TEMP_DIR, exist_ok=True)
     os.makedirs(DRIVE_BASE_PATH, exist_ok=True)
-    print(f"\n📁 Drive target: {DRIVE_BASE_PATH}")
-    
-    # ── 5. Transfer files ────────────────────────────────────
-    print(f"\n🚀 Starting transfer...\n")
-    
-    transferred = 0
-    skipped = 0
-    failed = 0
-    bytes_transferred = 0
-    start_time = time.time()
-    failed_files = []
-    
-    for i, blob in enumerate(all_blobs):
-        # Build relative path: RenderImages/PC_TYPE/cmap/file.png → PC_TYPE/cmap/file.png
-        relative_path = blob.name[len(GCS_BASE_PATH) + 1:]
-        drive_path = os.path.join(DRIVE_BASE_PATH, relative_path)
-        
-        # Skip if already exists (unless FORCE_OVERWRITE)
-        if not FORCE_OVERWRITE and os.path.exists(drive_path):
-            skipped += 1
-            continue
-        
-        # Create directory structure on Drive
-        os.makedirs(os.path.dirname(drive_path), exist_ok=True)
-        
-        try:
-            # Download directly to Drive mount
-            blob.download_to_filename(drive_path)
-            transferred += 1
-            bytes_transferred += blob.size or 0
-            
-        except Exception as e:
-            failed += 1
-            failed_files.append((relative_path, str(e)))
-            print(f"   ✗ FAILED: {relative_path} — {e}")
-            continue
-        
-        # Progress reporting
-        done = transferred + skipped + failed
-        if done % PROGRESS_INTERVAL == 0 or done == len(all_blobs):
-            elapsed = time.time() - start_time
-            rate = transferred / elapsed if elapsed > 0 else 0
-            eta = (len(all_blobs) - done) / rate if rate > 0 else 0
-            print(
-                f"   [{done}/{len(all_blobs)}] "
-                f"✓ {transferred} transferred, ⏭ {skipped} skipped, ✗ {failed} failed "
-                f"| {sizeof_fmt(bytes_transferred)} | {rate:.1f} files/s | ETA: {eta:.0f}s"
+
+    # ── 5. PHASE 1: Concurrent download GCS → Local SSD ─────
+    print(f"\n🚀 PHASE 1: Downloading from GCS → local SSD ({MAX_WORKERS} threads)...\n")
+
+    tracker = ProgressTracker(len(all_blobs))
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = []
+        for blob in all_blobs:
+            relative_path = blob.name[len(GCS_BASE_PATH) + 1:]
+            local_path = os.path.join(LOCAL_TEMP_DIR, relative_path)
+            drive_path = os.path.join(DRIVE_BASE_PATH, relative_path)
+            futures.append(
+                executor.submit(download_blob, blob, local_path, drive_path, tracker)
             )
-    
-    # ── 6. Summary ───────────────────────────────────────────
-    elapsed = time.time() - start_time
-    print(f"\n{'='*60}")
+
+        # Wait for all downloads to complete
+        for future in as_completed(futures):
+            try:
+                future.result()
+            except Exception as e:
+                print(f"   ✗ Unexpected thread error: {e}")
+
+    phase1_elapsed = time.time() - tracker.start_time
+    print(f"\n   Phase 1 done: {tracker.transferred} files downloaded in {phase1_elapsed:.1f}s")
+
+    if tracker.transferred == 0:
+        print("   Nothing new to copy to Drive (all files skipped or failed).")
+        shutil.rmtree(LOCAL_TEMP_DIR, ignore_errors=True)
+        return tracker.transferred, tracker.skipped, tracker.failed
+
+    # ── 6. PHASE 2: Batch copy Local SSD → Drive ────────────
+    print(f"\n📦 PHASE 2: Copying {tracker.transferred} files to Google Drive...")
+    phase2_start = time.time()
+
+    copied = 0
+    copy_failed = 0
+    for root, dirs, files in os.walk(LOCAL_TEMP_DIR):
+        for f in files:
+            src = os.path.join(root, f)
+            relative = os.path.relpath(src, LOCAL_TEMP_DIR)
+            dst = os.path.join(DRIVE_BASE_PATH, relative)
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            try:
+                shutil.copy2(src, dst)
+                copied += 1
+                if copied % 100 == 0:
+                    print(f"   Copied {copied}/{tracker.transferred} files to Drive...")
+            except Exception as e:
+                copy_failed += 1
+                print(f"   ✗ Copy failed: {relative} — {e}")
+
+    phase2_elapsed = time.time() - phase2_start
+    print(f"   Phase 2 done: {copied} files copied in {phase2_elapsed:.1f}s")
+
+    # ── 7. Cleanup local temp ────────────────────────────────
+    shutil.rmtree(LOCAL_TEMP_DIR, ignore_errors=True)
+
+    # ── 8. Summary ───────────────────────────────────────────
+    total_elapsed = time.time() - tracker.start_time
+    sep = '=' * 60
+    print(f"\n{sep}")
     print(f"✅ TRANSFER COMPLETE")
-    print(f"{'='*60}")
-    print(f"   Transferred : {transferred} files ({sizeof_fmt(bytes_transferred)})")
-    print(f"   Skipped     : {skipped} files (already on Drive)")
-    print(f"   Failed      : {failed} files")
-    print(f"   Total time  : {elapsed:.1f}s ({elapsed/60:.1f} min)")
-    print(f"   Avg speed   : {transferred/elapsed:.1f} files/s" if elapsed > 0 else "")
+    print(f"{sep}")
+    print(f"   Downloaded  : {tracker.transferred} files ({sizeof_fmt(tracker.bytes_transferred)})")
+    print(f"   Copied      : {copied} files to Drive")
+    print(f"   Skipped     : {tracker.skipped} files (already on Drive)")
+    print(f"   Failed      : {tracker.failed} download + {copy_failed} copy failures")
+    print(f"   Phase 1     : {phase1_elapsed:.1f}s (GCS → local, {MAX_WORKERS} threads)")
+    print(f"   Phase 2     : {phase2_elapsed:.1f}s (local → Drive)")
+    print(f"   Total time  : {total_elapsed:.1f}s ({total_elapsed/60:.1f} min)")
+    if total_elapsed > 0 and tracker.transferred > 0:
+        print(f"   Avg speed   : {tracker.transferred/total_elapsed:.1f} files/s")
     print(f"   Drive path  : {DRIVE_BASE_PATH}")
-    print(f"{'='*60}")
-    
-    if failed_files:
-        print(f"\n⚠ Failed files:")
-        for path, error in failed_files:
+    print(f"{sep}")
+
+    if tracker.failed_files:
+        print(f"\n⚠ Failed downloads:")
+        for path, error in tracker.failed_files:
             print(f"   • {path}: {error}")
-    
-    return transferred, skipped, failed
+
+    return tracker.transferred, tracker.skipped, tracker.failed
 
 
 # Run the transfer
