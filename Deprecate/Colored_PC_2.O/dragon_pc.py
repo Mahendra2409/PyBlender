@@ -48,18 +48,18 @@ for filename in os.listdir(directory_path):
         normalized_distances = np.log1p(normalized_distances) / np.log1p(1)
 
         # Get colors from colormap
-        colormap = plt.get_cmap("viridis")
+        colormap = plt.get_cmap("inferno")
         colors = colormap(normalized_distances)[:, :3]
 
         # Create mesh and set colors
-        location = (7.28883, -6.13761, -2.16309)
-        rotation = (92.8616, -6.26444, 62.9924)
-        scale = (0.013583, 0.013583, 0.013583)
+        location = (-9.52862, 0.662276, -3.07507)
+        rotation = (86.5028, 0.325332, -43.8195)
+        scale = (10.9494, 10.9494, -10.9494)
         mesh = bt.readNumpyPoints(noisy_points, location, rotation, scale)
         mesh = bt.setPointColors(mesh, colors)
 
         ptColor = bt.colorObj([], 0.5, 1.0, 1.0, 0.0, 0.0)
-        ptSize = 0.81  # Reduce point size for better visibility
+        ptSize = 0.001  # Reduce point size for better visibility
         bt.setMat_pointCloudColored(mesh, ptColor, ptSize)
 
         # Camera setup
