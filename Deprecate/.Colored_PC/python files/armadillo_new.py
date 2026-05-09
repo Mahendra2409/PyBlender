@@ -8,8 +8,12 @@ from scipy.spatial import cKDTree
 import blendertoolbox as bt
 
 # Define file paths for the ground truth and noisy point clouds
-ground_truth_path = '/home/hari/Desktop/pcd/BlenderToolbox/test/prenorm_armadillo/armadillo.xyz'
-noisy_path = '/home/hari/Desktop/pcd/BlenderToolbox/test/190.05_noisy_armadillo.xyz_gaussian_2.0.xyz'
+# ground_truth_path = '/home/hari/Desktop/pcd/BlenderToolbox/test/prenorm_armadillo/armadillo.xyz'
+# noisy_path = '/home/hari/Desktop/pcd/BlenderToolbox/test/190.05_noisy_armadillo.xyz_gaussian_2.0.xyz'
+# outputPath = os.path.abspath('./armadillo_denoised_bilateral_2.0.png')
+
+ground_truth_path = r'Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\armadillo_scaled_PC\gt_armadillo.xyz'
+noisy_path = r'Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\armadillo_scaled_PC\oursfiltered_armadillo.xyz_gaussian_2.5.xyz'
 outputPath = os.path.abspath('./armadillo_denoised_bilateral_2.0.png')
 
 # Initialize Blender

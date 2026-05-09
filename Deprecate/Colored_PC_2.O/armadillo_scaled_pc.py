@@ -11,10 +11,10 @@ print(f"Current working directory: {project_root_cwd}")
 
 # Define paths
 
-directory_path = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Point_cloud(.xyz)", "dragon_PC")
-ground_truth_filename = r'gt_asian_dragon.xyz'
+directory_path = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Point_cloud(.xyz)", "armadillo_scaled_PC")
+ground_truth_filename = r'gt_armadillo.xyz'
 ground_truth_path = os.path.join(directory_path, ground_truth_filename)
-output_dir = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Output_PC_Vis", "dragon_output")
+output_dir = os.path.join(project_root_cwd, "Data", "data.xyz(Colored_PC_2.O)", "Output_PC_Vis", "armadillo_scaled_output")
 
 os.makedirs(output_dir, exist_ok=True)
 
@@ -52,24 +52,24 @@ for filename in os.listdir(directory_path):
         colors = colormap(normalized_distances)[:, :3]
 
         # Create mesh and set colors
-        location = (-9.52862, 0.662276, -3.07507)
-        rotation = (86.5028, 0.325332, -43.8195)
-        scale = (10.9494, 10.9494, 10.9494)
+        location = (0.676391, -0.452058, -0.29675)
+        rotation = (433.818, 1.8476, -129.515)
+        scale = (2.24073, 2.24073, 2.24073)
         mesh = bt.readNumpyPoints(noisy_points, location, rotation, scale)
         mesh = bt.setPointColors(mesh, colors)
 
         ptColor = bt.colorObj([], 0.5, 1.0, 1.0, 0.0, 0.0)
-        ptSize = 0.001  # Reduce point size for better visibility
+        ptSize = 0.005  # Reduce point size for better visibility
         bt.setMat_pointCloudColored(mesh, ptColor, ptSize)
 
         # Camera setup
-        camLocation = (3, 0, 2)
-        lookAtLocation = (0, 0, 0.5)
+        camLocation = (-1.9494, 1.5553, 0.71451)
+        lookAtLocation = (0, 0, 0)
         focalLength = 45
         cam = bt.setCamera(camLocation, lookAtLocation, focalLength)
 
         # Light setup
-        lightAngle = (6, -30, -155)
+        lightAngle = (-17.5966, -47, -384)
         strength = 2
         shadowSoftness = 0.3
         sun = bt.setLight_sun(lightAngle, strength, shadowSoftness)
