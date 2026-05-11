@@ -1,8 +1,8 @@
 import os
-import Deprecate.Colored_PLY.render_big_girl as render_big_girl
-import Deprecate.Colored_PLY.render_cone as render_cone
-import Deprecate.Colored_PLY.render_girl as render_girl
-import Deprecate.Colored_PLY.render_girl_SS as render_girl_SS
+import Colored_PLY.render_big_girl as render_big_girl
+import Colored_PLY.render_cone as render_cone
+import Colored_PLY.render_girl as render_girl
+import Colored_PLY.render_girl_SS as render_girl_SS
 # import render_anything 
 
 # Get the current working directory.

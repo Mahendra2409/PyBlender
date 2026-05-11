@@ -1,7 +1,7 @@
 import os
 # import render_big_girl
 # import render_cone
-import Deprecate.Colored_PLY.render_girl_SS as render_girl_SS
+import Colored_PLY.render_girl_SS as render_girl_SS
 # import render_anything 
 
 project_root_cwd = os.getcwd()

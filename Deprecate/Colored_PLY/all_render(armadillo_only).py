@@ -1,8 +1,5 @@
 import os
-# import render_big_girl
-import Colored_PLY.render_madersperger as render_madersperger
-# import render_girl
-# import render_anything 
+import render_armadillo
 
 # Get the current working directory.
 # It's assumed that this script is run from a directory
@@ -10,8 +7,8 @@ import Colored_PLY.render_madersperger as render_madersperger
 project_root_cwd = os.getcwd()
 print(f"Current working directory: {project_root_cwd}")
 
-input_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "kinect", "kinect", "Madersperger_PLY")
-output_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "Output", "madersperger")
+input_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "kinect", "kinect", "armadillo_PLY")
+output_folder = os.path.join(project_root_cwd, "Data", "data.ply(Colored_PLY)", "Output", "armadillo")
 
 os.makedirs(output_folder, exist_ok=True)
 
@@ -25,6 +22,6 @@ for filename in os.listdir(input_folder):
         print(f"Output file already exists: {outputPath}. Skipping...")
         continue
     
-    if filename.endswith("madersperger.ply"):
-        print(f"Rendering [{filename}] with render_madersperger.py...")
-        render_madersperger.render(meshPath, outputPath)
+    if filename.endswith(".ply"):
+        print(f"Rendering [{filename}] with render_armadillo.py...")
+        render_armadillo.render(meshPath, outputPath)

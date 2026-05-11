@@ -1,5 +1,5 @@
 import os
-import Deprecate.Colored_PLY.render_big_girl as render_big_girl
+import Colored_PLY.render_big_girl as render_big_girl
 # import render_cone
 # import render_girl
 # import render_anything 
