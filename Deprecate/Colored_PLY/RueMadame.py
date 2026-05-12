@@ -12,9 +12,9 @@ def render(meshPath, output_Render_Img_Path):
     bt.blenderInit(imgRes_x, imgRes_y, numSamples, exposure)
 
     ## object transform values
-    location = (-0.10223, -0.045334, 0.595313)
-    rotation = (-98.3111, -0.091982, 77.1309)
-    scale = (2.25729, 2.25729, 2.25729)
+    location = (-20.0591, -23.3345, -9.59289)
+    rotation = (-0.746005, -0.51064, 144.282)
+    scale = (0.200259, 0.200259, 0.200259)
 
     ## read mesh
     mesh = bt.readMesh(meshPath, location, rotation, scale)
@@ -57,13 +57,13 @@ def render(meshPath, output_Render_Img_Path):
     # bt.invisibleGround(location=(0.528125, 0, -4.87092), shadowBrightness=0.9)
 
     ## camera
-    camLocation = (3, 0, 2)
+    camLocation = (-1.9494, 1.5553, 0.71451)
     lookAtLocation = (0, 0, 0.5)
     focalLength = 45
     cam = bt.setCamera(camLocation, lookAtLocation, focalLength)
 
     ## lighting
-    lightAngle = (6, -38, -155)
+    lightAngle = (40.4034, -48, -396)
     strength = 2
     shadowSoftness = 0.3
     sun = bt.setLight_sun(lightAngle, strength, shadowSoftness)
@@ -99,4 +99,4 @@ def render(meshPath, output_Render_Img_Path):
     bpy.ops.wm.save_mainfile(filepath=blend_path)
 
     ## render image
-    bt.renderImage(output_Render_Img_Path, cam)
+    # bt.renderImage(output_Render_Img_Path, cam)

@@ -1,5 +1,5 @@
 import os
-import RueMadame as Render_Engine
+import RueMadame_blend_file as Render_Engine
 
 # Get the current working directory.
 # It's assumed that this script is run from a directory
@@ -18,10 +18,11 @@ for filename in os.listdir(input_folder):
     
     meshPath = os.path.join(input_folder, filename)
     outputPath = os.path.join(output_folder, filename.replace(".ply", ".png"))
-    if os.path.exists(outputPath):
-        print(f"Output file already exists: {outputPath}. Skipping...")
+    blend_path = os.path.join(output_folder, filename.replace(".ply", ".blend"))
+    if os.path.exists(blend_path):
+        print(f"Blend file already exists: {blend_path}. Skipping...")
         continue
     
     if filename.endswith(".ply"):
-        print(f"Rendering [{filename}]...")
+        print(f"Setting up blend file for [{filename}]...")
         Render_Engine.render(meshPath, outputPath)
