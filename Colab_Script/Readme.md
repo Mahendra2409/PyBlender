@@ -1,6 +1,10 @@
 If you don't want to mount google drive or just want to do experiment with rendering use **[.test_within_colab.ipynb](https://colab.research.google.com/github/Mahendra2409/PyBlender/blob/main/Colab_Script/.test_within_colab.ipynb)** Notebook.
 
-# 🚀 Quick Start Guide: Rendering Point Clouds in Google Colab
+# 🚀 Colab Scripts — Quick Start Guide
+
+> Automated rendering workflows using Google Colab's free GPU instances and Google Drive.
+
+📂 **Parent**: [PyBlender](../README.md)
 
 Welcome! This guide will show you how to use our automated script to turn raw 3D point cloud data (`.xyz` files) into 2D rendered images (`.png`) using **Blender 4.0** in Google Colab.
 
@@ -10,8 +14,12 @@ Welcome! This guide will show you how to use our automated script to turn raw 3D
 
 ## 🗺️ The Workflow at a Glance
 
-```
-[Your .xyz Data] ──> [Google Drive] ──> [Colab Cloud GPU] ──> [Rendered .png Images]
+```mermaid
+flowchart LR
+    A["Raw Data\n(Your .xyz Files)"] -->|Stored in| B("Google Drive\n(PyBlender_Render_Farm)")
+    B -->|Mounted via Drive API| C["Google Colab\n(T4 Cloud GPU)"]
+    C -->|GPU Renders Image| D["Final Output\n(.png / .blend)"]
+    D -->|Saved back to| B
 ```
 
 ---
@@ -19,7 +27,7 @@ Welcome! This guide will show you how to use our automated script to turn raw 3D
 ## 🛠️ Step 1: Prepare Your Google Drive
 
 
-### [Need to do only one time!!!!] Create a shortcut of the Shared Folder(PyBlender_Render_Farm) into Drive 
+### [One-time setup] Create a shortcut of the Shared Folder into Drive 
 Since the required folder is shared with you, you need to add it to your own Google Drive. **You only have to do this one time.** Once added, you can run any script for the point clouds in this folder without repeating these steps.
 
 1. Go to the **Shared with me** section in Google Drive.
@@ -27,16 +35,16 @@ Since the required folder is shared with you, you need to add it to your own Goo
 3. Click on the **Organize** button (or icon) in the top menu.
 4. Select **Add shortcut** (or Add) to add it to "My Drive".
 
-<img src="../public/shared%20with%20me.png" alt="Shared with me" width="300">
-<img src="../public/Organize.png" alt="Organize" width="400">
-<img src="../public/Add.png" alt="Add" width="400">
+<img src="../Tools/public/shared%20with%20me.png" alt="Shared with me" width="300">
+<img src="../Tools/public/Organize.png" alt="Organize" width="400">
+<img src="../Tools/public/Add.png" alt="Add" width="400">
+
+*(Note: The above images assume they are hosted or accessible locally, usually you will view these on GitHub)*
 
 ### Folder Structure
-The script looks for a very specific folder structure in your **[Google Drive](https://drive.google.com/drive/folders/1sj-RqD5HRypGx-ZLqXpvyzY1CN84qJu-?usp=sharing)**. Make sure your raw `.xyz` point cloud files (and your Ground Truth file) are placed exactly like this:
+The script looks for a very specific folder structure in your **Google Drive**. Make sure your raw `.xyz` point cloud files (and your Ground Truth file) are placed exactly like this:
 
-
-
-```
+```text
 📁 My Drive
  └── 📁 PyBlender_Render_Farm
       └── 📁 PointCloud
@@ -51,18 +59,18 @@ The script looks for a very specific folder structure in your **[Google Drive](h
 
 ## 💻 Step 2: Set Up Google Colab
 
-1. Go to Notebook in this directory and Click <a  target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> button.
+1. Open a Notebook in this directory and Click the **Open In Colab** badge (if viewing on GitHub/Colab).
 2. **Turn on the GPU:** Go to the top menu, click **Runtime > Change runtime type**, and select **T4 GPU**.
-3. **Run all the cell**
-4. **Allow Permission** Allow Drive Access permission.
+3. **Run all the cells:** Select `Runtime > Run all`.
+4. **Allow Permission:** Allow Drive Access permission when the popup appears.
 
 
 ---
 
 <details>
-<summary><h2>Rendering Configuration Details</h2></summary>
+<summary><h2>⚙️ Rendering Configuration Details</h2></summary>
 
-At the very top of the `render.py` script, you will find the **Configuration Section**. You can easily change how the final image looks by changing these values.
+At the very top of the `render.py` script (inside the Colab cell), you will find the **Configuration Section**. You can easily change how the final image looks by changing these values.
 
 | Configuration Variable | Category | Description |
 |---|---|---|
@@ -91,4 +99,3 @@ At the very top of the `render.py` script, you will find the **Configuration Sec
 | SHADOW_THRESHOLD | Lighting | The alpha cutoff point for rendering the shadow catcher floor plane. |
 
 </details>
-

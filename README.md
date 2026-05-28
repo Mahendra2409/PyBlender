@@ -1,55 +1,115 @@
-# PyBlender
+# 🎨 PyBlender Rendering Pipeline
 
-Python script for rendering point clouds using Blender.
+> A robust, GPU-accelerated Python pipeline for rendering 3D point cloud and mesh comparisons using Blender's Cycles renderer.
 
-First you need to download this:
-[Download Data from here](https://drive.google.com/file/d/1-Je6lepAuIfM9C5AhRyYJuf86TkigIIX/view?usp=drive_link) or by implementing 6th step. 
+---
 
-`Colored_PC_2.O` contain script for .xyz files.
+## 📖 Overview
 
-`Colored_PLY` contain script for .ply file.
+**PyBlender** is designed to visualize 3D point cloud and mesh denoising/reconstruction results. It computes distance-based errors between ground truth and reconstructed point clouds, applies colormaps (e.g., viridis, turbo) to represent these distances, and renders high-quality images using **Blender Cycles**.
 
-`Data` it contain input for above scripts and output will also be saved in this folder.
+Key features include:
+- **Fast GPU Rendering**: OptiX denoising on the GPU for ~8x faster renders.
+- **Automated Workflows**: Ready-to-run Jupyter Notebooks for Google Colab and Kaggle.
+- **Cloud Integration**: Async uploads directly to Google Cloud Storage (GCS) and Weights & Biases (WandB) tracking.
+- **Extensive Colormap Support**: Compare point clouds using 168+ matplotlib colormaps.
 
-## How to run this code
+---
 
-1. Make sure Blender should be installed in your PC.
+## 🏗️ System Architecture
 
-2. Go to PyBlender folder.
-
+```mermaid
+flowchart LR
+    A["Raw Data\n(.xyz / .ply)"] --> B{"Execution Environment"}
+    
+    subgraph Environments [Rendering Engines]
+        B -->|Google Colab| C["Colab_Script/\nSingle/Multi-Colormap"]
+        B -->|Kaggle (TPU/CPU)| D["Kaggel_Script/\nHigh Performance"]
+        B -->|Local PC| E["Data.py + Local Scripts"]
+    end
+    
+    C --> F["Blender Cycles\n(Python 3.10)"]
+    D --> F
+    E --> F
+    
+    F -->|GPU Rendering| G["Outputs\n(.png / .blend)"]
+    G --> H["Google Drive / GCS"]
+    G --> I["Colormap Catalog\nWebsite"]
 ```
+
+---
+
+## 📂 Repository Structure
+
+```text
+PyBlender/
+├── 📁 BlenderToolbox/              # Cloned dependency for Blender Python utilities
+├── 📁 Colab_Script/                # Ready-to-use Google Colab notebooks
+├── 📁 Kaggel_Script/               # High-performance Kaggle notebooks with GCS/WandB
+├── 📁 Colormap_Catloge_Website/    # Vite/React app for browsing rendered colormaps
+├── 📁 Data/                        # 📦 Point clouds & meshes (Ignored in git, download required)
+├── 📁 Deprecate/                   # Legacy Python scripts (Colored_PC, etc.)
+├── 📁 Tools/                       # Utility scripts (Clean notebooks, extract PNGs)
+├── 📄 Data.py                      # Script to download asset data from Google Drive
+├── 📄 requirements.txt             # Python dependencies
+└── 📄 README.md                    # You are here!
+```
+
+*For more details, check the `README.md` inside each respective directory.*
+
+---
+
+## 🚀 Quick Start Guide
+
+### 1. Requirements
+- **Blender 4.0+** installed on your system.
+- Python 3.10+ (Recommended: use a virtual environment).
+
+### 2. Installation
+
+Clone the repository and set up your virtual environment:
+
+```bash
+git clone https://github.com/Mahendra2409/PyBlender.git
 cd PyBlender
-```
-3. Create virtual environment 
-```
+
+# Create and activate virtual environment (Windows)
 python -m venv .venv
-
-OR
-
-conda create --prefix ./.venv python=3.10.11 cmake=3.14.0 -y
-```
-Activate virtual environment 
-```
-(for windows)
 .venv\Scripts\activate
 
-(for linux)
-source .venv/bin/activate
+# (Linux / Mac)
+# source .venv/bin/activate
 ```
 
-4. install requirements.txt
-```
+Install the required Python dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
-5. Clone BlenderToolbox Repositry
-```
+
+Clone the required **BlenderToolbox** repository:
+
+```bash
 git clone https://github.com/HTDerekLiu/BlenderToolbox.git
 ```
-6. Download Data using python script (Skip !! if you already downloaded from above link).
-```
+
+### 3. Download the Data
+
+Because 3D point cloud data is large, it is not stored in this repository. You need to download it directly.
+Run the download script:
+
+```bash
 python Data.py
 ```
+*(Alternatively, you can manually download the data from the link inside `Data/README.md`)*
 
-7. Now it is ready to run any Script in this Repositry.
+### 4. Running Scripts
 
+You are now ready to run scripts!
+- For **Local runs**, navigate to the specific script directories or explore the `Tools/`.
+- For **Cloud rendering**, explore the [Colab Scripts](Colab_Script/Readme.md) or [Kaggle Scripts](Kaggel_Script/README.md) directories and run the provided notebooks.
 
+---
+
+> [!NOTE]
+> Are you looking for the legacy local rendering scripts? They have been moved to the [`Deprecate/`](Deprecate/README.md) directory in favor of cloud-optimized Colab and Kaggle pipelines.
