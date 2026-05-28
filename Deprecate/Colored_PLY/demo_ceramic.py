@@ -3,7 +3,9 @@ import bpy
 import os
 import numpy as np
 
-meshPath = r"M:\Order to PC\CAD_Reconstruction\Blender\kinect\kinect\Score_big_girl_recon.ply"
+import os
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+meshPath = os.path.join(base_dir, r"CAD_Reconstruction\Blender\kinect\kinect\Score_big_girl_recon.ply")
 output_Render_Img_name = filepath=os.getcwd() + '/Score_big_girl_recon.blend'
 
 

@@ -8,9 +8,12 @@ from scipy.spatial import cKDTree
 import blendertoolbox as bt
 
 # Define file paths for the ground truth and noisy point clouds
-ground_truth_path = r'M:\Order-to-PC\PyBlender\Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\ellipsoid_3.0_PC\ellipsoid.xyz'
-noisy_path = r'M:\Order-to-PC\PyBlender\Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\ellipsoid_3.0_PC\noisy_ellipsoid_gaussian_3.0_wloped.xyz'
-outputPath = r'M:\Order-to-PC\PyBlender\ellipsoid_3.0_output'
+import os
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ground_truth_path = os.path.join(base_dir, r'Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\ellipsoid_3.0_PC\ellipsoid.xyz')
+noisy_path = os.path.join(base_dir, r'Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\ellipsoid_3.0_PC\noisy_ellipsoid_gaussian_3.0_wloped.xyz')
+outputPath = os.path.join(base_dir, 'ellipsoid_3.0_output')
+
 
 # Initialize Blender
 imgRes_x = 1000

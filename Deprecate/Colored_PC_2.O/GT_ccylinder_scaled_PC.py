@@ -8,8 +8,10 @@ import blendertoolbox as bt
 COLORMAP = "viridis"  # Define the colormap to use
 
 # Define file path for the ground truth point cloud
-ground_truth_path = r'M:\Order-to-PC\PyBlender\Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\ccylinder_scaled_PC_new\gt_ccylinder.xyz'
-outputPath = rf'M:\Order-to-PC\PyBlender\Data\data.xyz(Colored_PC_2.O)\Output_PC_Vis\ccylinder_output_new\{COLORMAP}_colormap\gt_ccylinder.png'
+import os
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ground_truth_path = os.path.join(base_dir, r'Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\ccylinder_scaled_PC_new\gt_ccylinder.xyz')
+outputPath = os.path.join(base_dir, rf'Data\data.xyz(Colored_PC_2.O)\Output_PC_Vis\ccylinder_output_new\{COLORMAP}_colormap\gt_ccylinder.png')
 
 # Initialize Blender
 imgRes_x = 1000

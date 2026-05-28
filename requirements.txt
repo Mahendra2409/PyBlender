@@ -20,3 +20,7 @@ six==1.17.0
 urllib3==2.4.0
 zstandard==0.23.0
 gdown
+google-cloud-storage
+wandb
+plyfile
+plotly

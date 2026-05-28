@@ -1,5 +1,5 @@
 import os
-import RueMadame_blend_file as Render_Engine
+import RueMadame as Render_Engine
 
 # Get the current working directory.
 # It's assumed that this script is run from a directory

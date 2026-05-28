@@ -23,7 +23,7 @@ drive.mount('/content/drive')
 from google.colab import userdata
 import os
 
-GCS_KEY_PATH = '/tmp/pyblender-e37593034bc1.json'
+GCS_KEY_PATH = '/tmp/gcs_service_account.json'
 
 # Check if key already exists (from previous cell run)
 if os.path.exists(GCS_KEY_PATH):
@@ -48,7 +48,7 @@ from google.cloud import storage
 from collections import defaultdict
 
 # ─── Configuration ───────────────────────────────────────────
-GCS_KEY_PATH = '/tmp/pyblender-e37593034bc1.json'
+GCS_KEY_PATH = '/tmp/gcs_service_account.json'
 BUCKET_NAME = 'pyblender-render-farm'
 GCS_BASE_PATH = 'RenderImages'  # Root prefix in the bucket
 DRIVE_BASE_PATH = '/content/drive/MyDrive/PyBlender/Compare'
@@ -233,7 +233,7 @@ print(f"\n✅ Verification complete!")
 import os
 from google.cloud import storage
 
-GCS_KEY_PATH = '/tmp/pyblender-e37593034bc1.json'
+GCS_KEY_PATH = '/tmp/gcs_service_account.json'
 BUCKET_NAME = 'pyblender-render-farm'
 GCS_BASE_PATH = 'RenderImages'
 DRIVE_BASE_PATH = '/content/drive/MyDrive/PyBlender/Compare'

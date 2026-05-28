@@ -8,9 +8,11 @@ from scipy.spatial import cKDTree
 import blendertoolbox as bt
 
 # Define file paths for the ground truth and noisy point clouds
-ground_truth_path = r'M:\Order to PC\CAD_Reconstruction\Blender\Colored_PC_2.O\Point_cloud(.xyz)\Cube_PC\cube_pyramid_hole_clean.xyz'
-noisy_path = r'M:\Order to PC\CAD_Reconstruction\Blender\Colored_PC_2.O\Point_cloud(.xyz)\Cube_PC\delnoise_noisy_cube_pyramid_hole_gaussian_0.5.xyz'
-outputPath = r'M:\Order to PC\CAD_Reconstruction\Blender\Colored_PC_2.O\Output_PC_Vis\Cube_Output2'
+import os
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+ground_truth_path = os.path.join(base_dir, r'CAD_Reconstruction\Blender\Colored_PC_2.O\Point_cloud(.xyz)\Cube_PC\cube_pyramid_hole_clean.xyz')
+noisy_path = os.path.join(base_dir, r'CAD_Reconstruction\Blender\Colored_PC_2.O\Point_cloud(.xyz)\Cube_PC\delnoise_noisy_cube_pyramid_hole_gaussian_0.5.xyz')
+outputPath = os.path.join(base_dir, r'CAD_Reconstruction\Blender\Colored_PC_2.O\Output_PC_Vis\Cube_Output2')
 
 # Initialize Blender
 imgRes_x = 1000

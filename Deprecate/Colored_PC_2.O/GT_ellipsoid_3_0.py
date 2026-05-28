@@ -7,8 +7,10 @@ import numpy as np
 import blendertoolbox as bt
 
 # Define file path for the ground truth point cloud
-ground_truth_path = r'M:\Order-to-PC\PyBlender\Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\ellipsoid_3.0_PC\scaled_v2\ellipsoid.xyz'
-outputPath = os.path.abspath(r'M:\Order-to-PC\PyBlender\Data\data.xyz(Colored_PC_2.O)\Output_PC_Vis\Ellipsoid_3_0_output\scaled_v3\ellipsoid_GT.png')
+import os
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ground_truth_path = os.path.join(base_dir, r'Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\ellipsoid_3.0_PC\scaled_v2\ellipsoid.xyz')
+outputPath = os.path.abspath(os.path.join(base_dir, r'Data\data.xyz(Colored_PC_2.O)\Output_PC_Vis\Ellipsoid_3_0_output\scaled_v3\ellipsoid_GT.png'))
 
 # Initialize Blender
 imgRes_x = 1000

@@ -1,13 +1,11 @@
 import numpy as np
 import open3d as o3d
 import matplotlib.pyplot as plt
-import os
 
 
 clean_path = r"Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\lucy_PC\lucy_clean.xyz"
-result_path = r"Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\lucy_PC\6_64_noisy_lucy_gaussian_1.0.xyz"
-image_path = r"Data\data.xyz(Colored_PC_2.O)\Output_PC_Vis\lucy_output\6_64_noisy_lucy_gaussian_1.0.png"
-camera_path = r"Data\data.xyz(Colored_PC_2.O)\Output_PC_Vis\lucy_output\6_64_noisy_lucy_gaussian_1.0_camera.json"
+result_path = r"Data\data.xyz(Colored_PC_2.O)\Point_cloud(.xyz)\lucy_PC\bilateral_lucy_gaussian_1.0.xyz"
+image_path = r"Data\data.xyz(Colored_PC_2.O)\Output_PC_Vis\lucy_output\bilateral_lucy_gaussian_1.0.png"
 
 
 # ============================================================
@@ -74,8 +72,7 @@ clean_pcd.estimate_normals(
     )
 )
 
-# Vastly faster than orient_normals_consistent_tangent_plane
-clean_pcd.orient_normals_towards_camera_location(np.array([0., 0., 1000.]))
+clean_pcd.orient_normals_consistent_tangent_plane(100)
 
 
 # ============================================================
@@ -181,10 +178,6 @@ def save_image_callback(vis):
 
     print(f"\nImage saved to: {image_path}")
 
-    param = vis.get_view_control().convert_to_pinhole_camera_parameters()
-    o3d.io.write_pinhole_camera_parameters(camera_path, param)
-    print(f"Camera parameters saved to: {camera_path}")
-
     return False
 
 
@@ -197,12 +190,6 @@ vis.create_window(
 )
 
 vis.add_geometry(pcd)
-
-# Load constraints/view early if present
-if os.path.exists(camera_path):
-    print(f"\nLoading existing camera parameters from: {camera_path}")
-    param = o3d.io.read_pinhole_camera_parameters(camera_path)
-    vis.get_view_control().convert_from_pinhole_camera_parameters(param)
 
 render_opt = vis.get_render_option()
 
